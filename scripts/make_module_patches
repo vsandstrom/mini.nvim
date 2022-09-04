@@ -1,0 +1,56 @@
+# Make patches. Script should be executed inside project root.
+mkdir -p patches
+
+make_patch () {
+  # First argument is a string with module name. Others - extra paths to track
+  # for module.
+  module=$1
+  shift
+
+  # Make patch with commits from 'sync' branch to current HEAD which affect
+  # files related to the input module
+  patch_path=patches/$module.patch
+
+  git log sync..HEAD --output $patch_path --patch -- \
+    lua/mini/$module.lua \
+    tests/helpers.lua \
+    tests/test_$module.lua \
+    tests/dir-$module/* \
+    tests/screenshots/tests-test_$module.lua* \
+    doc/mini-$module.txt \
+    readmes/mini-$module.md \
+    .stylua.toml \
+    Makefile \
+    $@
+
+  # Move 'readmes/mini-xxx.md' to 'README.md'
+  # This also means move all references used in it one step higher (and hope
+  # that it doesn't occure anywhere else in patch)
+  sed -i "s/readmes\/mini-$module\.md/README.md/" $patch_path
+  sed -i "s/\[help file\](\.\.\//[help file](/" $patch_path
+  sed -i "s/\[contributing guides\](\.\.\//[contributing guides](/" $patch_path
+  # These are mostly specific to 'mini.test'
+  sed -i "s/\[TESTING\.md\](\.\.\//[TESTING.md](/" $patch_path
+  sed -i "s/\[tests\](\.\.\//[tests](/" $patch_path
+}
+
+make_patch "ai"
+make_patch "base16" colors/*
+make_patch "bufremove"
+make_patch "comment"
+make_patch "completion"
+make_patch "cursorword"
+make_patch "doc"
+make_patch "fuzzy"
+make_patch "indentscope"
+make_patch "jump"
+make_patch "jump2d"
+make_patch "misc"
+make_patch "pairs"
+make_patch "sessions"
+make_patch "starter" benchmarks/starter/*
+make_patch "statusline"
+make_patch "surround"
+make_patch "tabline"
+make_patch "test"
+make_patch "trailspace"

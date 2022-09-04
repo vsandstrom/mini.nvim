@@ -67,6 +67,7 @@ This project uses [StyLua](https://github.com/JohnnyMorganz/StyLua) version 0.14
     - Generate help files.
     - Add README to 'readmes' directory.
     - Update 'CHANGELOG.md' to mention introduction of new module.
+    - Update 'scripts/make_module_patches' to include new module.
 
 ## List of highlight groups
 
